@@ -44,6 +44,7 @@ YeePlatform.prototype = {
         var nightModeService = null;
         var name;
         var isNightModeSupported = dev.model == 'ceiling3' || dev.model == 'ceiling4'
+        console.log(dev.model, 'here!!!!')
 
         for (var index in this.yeeAccessories) {
             var accessory = this.yeeAccessories[index];

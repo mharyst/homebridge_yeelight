@@ -531,41 +531,36 @@ exports.YeeAgent = function(ip, handler) {
                 } else {
                     that.log("connect ok: " + did);
 
-                    pdev.discoverServices(null, function(error, services) {
+                    pdev.discoverServices(['fe87'], function(error, services) {
                         that.log('discovered services');
-                        console.log('services: ', services)
                         that.devices[did].discovering = 0;
-                        // var deviceInformationService = services[0];
-                        for (var i in services) {
+                        var deviceInformationService = services[0];
 
-
-                        services[i].discoverCharacteristics(
-                        // deviceInformationService.discoverCharacteristics(
-                             null,
+                        deviceInformationService.discoverCharacteristics(
+                             ['aa7d3f342d4f41e0807f52fbf8cf7443', '8f65073d9f574aaaafea397d19d5bbeb'],
                              function(error, characteristics) {
-                                console.log('characteristics: ', characteristics)
-                            //      that.devices[did].bleDevRWHdl = characteristics[0];
-                            //      that.devices[did].bleDevNotifyHdl = characteristics[1];
-                            //      that.devices[did].bleDevNotifyHdl.on('data', function(data, isNotify) {
-                            //          that.handleBLENotify(did, data, isNotify);
-                            //      });
+                                 that.devices[did].bleDevRWHdl = characteristics[0];
+                                 that.devices[did].bleDevNotifyHdl = characteristics[1];
+                                 that.devices[did].bleDevNotifyHdl.on('data', function(data, isNotify) {
+                                     that.handleBLENotify(did, data, isNotify);
+                                 });
 
-                            //      that.devices[did].bleDevNotifyHdl.subscribe(function(error) {
-                            //          that.log('ble notification on');
-                            //          // 43 67 for auth
-                            //          bleCmd[0] = 0x43;
-                            //          bleCmd[1] = 0x67;
-                            //          // deadbeef as magic for our Pi
-                            //          bleCmd[2] = 0xde;
-                            //          bleCmd[3] = 0xad;
-                            //          bleCmd[4] = 0xbe;
-                            //          bleCmd[5] = 0xbf;
+                                 that.devices[did].bleDevNotifyHdl.subscribe(function(error) {
+                                     that.log('ble notification on');
+                                     // 43 67 for auth
+                                     bleCmd[0] = 0x43;
+                                     bleCmd[1] = 0x67;
+                                     // deadbeef as magic for our Pi
+                                     bleCmd[2] = 0xde;
+                                     bleCmd[3] = 0xad;
+                                     bleCmd[4] = 0xbe;
+                                     bleCmd[5] = 0xbf;
 
-                            //          that.devices[did].sendBLECmd();
-                            //          that.devices[did].connected = true;
-                            //          that.handler.onDevConnected(that.devices[did]);
-                            //    });
-                        });}
+                                     that.devices[did].sendBLECmd();
+                                     that.devices[did].connected = true;
+                                     that.handler.onDevConnected(that.devices[did]);
+                               });
+                        });
                     });
                 }
             });

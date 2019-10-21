@@ -505,6 +505,7 @@ exports.YeeAgent = function(ip, handler) {
                                               "100",
                                               "0",
                                               "unknown",
+                                              "",
                                               that.devPropChange
                                              );
           

@@ -535,9 +535,12 @@ exports.YeeAgent = function(ip, handler) {
                         that.log('discovered services');
                         console.log('services: ', services)
                         that.devices[did].discovering = 0;
-                        var deviceInformationService = services[0];
+                        // var deviceInformationService = services[0];
+                        for (var i in services) {
 
-                        deviceInformationService.discoverCharacteristics(
+
+                        services[i].discoverCharacteristics(
+                        // deviceInformationService.discoverCharacteristics(
                              null,
                              function(error, characteristics) {
                                 console.log('characteristics: ', characteristics)
@@ -562,7 +565,7 @@ exports.YeeAgent = function(ip, handler) {
                             //          that.devices[did].connected = true;
                             //          that.handler.onDevConnected(that.devices[did]);
                             //    });
-                        });
+                        });}
                     });
                 }
             });

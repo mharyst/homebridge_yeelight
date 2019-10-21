@@ -5,8 +5,10 @@ var noble = null;
 var bleCmd = [];
 bleCmd.length = 18;
 
+var CANDELA_LOCAL_NAME = 'yeelight_ms'
+
 try {
-    var noble = require('noble');
+    var noble = require('@abandonware/noble');
 } catch (ex) {
     console.log("failed to load BLE module!");
 }
@@ -463,7 +465,11 @@ exports.YeeAgent = function(ip, handler) {
 
             if (localName && localName.indexOf("XMCTD_") >= 0) {
                 that.log("found Yeelight Bedside lamp: " + peripheral.address);
-                that.handleBLEDevice(peripheral);
+                that.handleBLEDevice("bedside", peripheral);
+            }
+            if (localName && localName === CANDELA_LOCAL_NAME) {
+                that.log("found Yeelight Candela: " + peripheral.address);
+                that.handleBLEDevice("candela", peripheral);
             }
         });
     }.bind(this);
@@ -481,7 +487,7 @@ exports.YeeAgent = function(ip, handler) {
         this.log("stop this round of scan");
     }.bind(this);
 
-    this.handleBLEDevice = function(pdev) {
+    this.handleBLEDevice = function(name, pdev) {
         var did = pdev.address;
         var that = this;
 
@@ -492,7 +498,7 @@ exports.YeeAgent = function(ip, handler) {
 
             that.devices[did] = new YeeDevice(did,
                                               "0.0.0.0:0",
-                                              "bedside",
+                                              name,
                                               "on",
                                               "100",
                                               "360",

@@ -591,26 +591,29 @@ exports.YeeAgent = function(ip, handler) {
             else
                 dev.propChangeCb(dev, 'power', 0);
 
-            dev.propChangeCb(dev, 'bright', data[8]);
+            dev.propChangeCb(dev, 'bright', this.model === 'bedside' ? data[8] : data[3]);
 
-            switch (data[3]) {
-                case 2: // "sunshine" aka white mode
-                    var temp = (data[9] << 8) + (data[10] & 255);
-                    dev.propChangeCb(dev, 'ct', transform_ct(temp, dev.model, "dev_to_hk"));
-                    dev.propChangeCb(dev, 'sat', 0);
-                    break;
-                case 1: // "color" mode
-                    var red = data[4];
-                    var green = data[5];
-                    var blue = data[6];
-                    var p = rgbToHsv((red << 16) + (green << 8) + blue);
-                    dev.propChangeCb(dev, 'hue', p[0]);
-                    dev.propChangeCb(dev, 'sat', p[1]);
-                    break;
-                case 3:
-                    console.log("lamp entered flow mode");
-                    break;
+            if (this.model === 'bedside') {
+                switch (data[3]) {
+                    case 2: // "sunshine" aka white mode
+                        var temp = (data[9] << 8) + (data[10] & 255);
+                        dev.propChangeCb(dev, 'ct', transform_ct(temp, dev.model, "dev_to_hk"));
+                        dev.propChangeCb(dev, 'sat', 0);
+                        break;
+                    case 1: // "color" mode
+                        var red = data[4];
+                        var green = data[5];
+                        var blue = data[6];
+                        var p = rgbToHsv((red << 16) + (green << 8) + blue);
+                        dev.propChangeCb(dev, 'hue', p[0]);
+                        dev.propChangeCb(dev, 'sat', p[1]);
+                        break;
+                    case 3:
+                        console.log("lamp entered flow mode");
+                        break;
+                }
             }
+
 
             console.log("power: " + data[2] + " bright: " + data[8]);
         }   

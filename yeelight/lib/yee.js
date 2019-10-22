@@ -179,7 +179,7 @@ YeeDevice = function (did, loc, model, power, bri, hue, sat, ct, name, color_mod
     this.setPower = function(is_on) {
         this.power = is_on;
 
-        if (this.model == "bedside") {
+        if (this.model == "bedside" || this.model == "candela") {
             bleCmd[0] = 0x43;
             bleCmd[1] = 0x40;
             bleCmd[2] = is_on ? 0x01 : 0x02;
@@ -203,7 +203,7 @@ YeeDevice = function (did, loc, model, power, bri, hue, sat, ct, name, color_mod
     this.setBright = function(val) {
         this.bright = val;
 
-        if (this.model == "bedside") {
+        if (this.model == "bedside" || this.model == "candela") {
             bleCmd[0] = 0x43;
             bleCmd[1] = 0x42;
             bleCmd[2] = parseInt(val.toString(16), 16);
@@ -465,11 +465,11 @@ exports.YeeAgent = function(ip, handler) {
 
             if (localName && localName.indexOf("XMCTD_") >= 0) {
                 that.log("found Yeelight Bedside lamp: " + peripheral.address);
-                that.handleBLEDevice("bedside", peripheral);
+                that.handleBLEDevice("bedside", {hue: '360', sat: '100', ct: '0'}, peripheral);
             }
             if (localName && localName === CANDELA_LOCAL_NAME) {
                 that.log("found Yeelight Candela: " + peripheral.address);
-                that.handleBLEDevice("candela", peripheral);
+                that.handleBLEDevice("candela", {hue: '', sat: '', ct: ''}, peripheral);
             }
         });
     }.bind(this);
@@ -487,7 +487,7 @@ exports.YeeAgent = function(ip, handler) {
         this.log("stop this round of scan");
     }.bind(this);
 
-    this.handleBLEDevice = function(name, pdev) {
+    this.handleBLEDevice = function(name, {hue, sat, ct}, pdev) {
         var did = pdev.address;
         var that = this;
 
@@ -501,9 +501,9 @@ exports.YeeAgent = function(ip, handler) {
                                               name,
                                               "on",
                                               "100",
-                                              "360",
-                                              "100",
-                                              "0",
+                                              hue,
+                                              sat,
+                                              ct,
                                               "unknown",
                                               "",
                                               that.devPropChange
